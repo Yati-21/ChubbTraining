@@ -1,0 +1,21 @@
+/bin/
+
+
+# Ignore Eclipse workspace metadata
+**/.metadata/
+
+# Ignore build and bin directories
+/bin/
+/obj/
+/target/
+/build/
+
+# Ignore common OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+
+# Ignore Gradle and Java specific
+.gradle/
+*.class
