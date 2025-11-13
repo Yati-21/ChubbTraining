@@ -18,7 +18,7 @@ public class FileReadLineByLine
 		
 		try(BufferedReader bufferedReader= new BufferedReader(new FileReader(filename))) 
 		{
-			
+
 			String line; //line will iterate through the paragraph
 			while((line=bufferedReader.readLine())!=null) 
 			{				
@@ -66,8 +66,6 @@ public class FileReadLineByLine
 		String filename="D:/CHUBB Training/13Nov25/FileHandling/src/India.txt";
 		System.out.println("count of 'india' (traditional way) : "+ traditionalApproach(filename));
 		System.out.println("count of 'india' using stream api : "+ functionalApproach(filename));
-			
-
 		
 		
 		
