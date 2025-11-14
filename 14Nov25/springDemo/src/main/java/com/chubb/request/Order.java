@@ -1,17 +1,22 @@
 package com.chubb.request;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 public class Order 
 {
 	
 	//attributes
+	
+	@NotBlank
 	private String item;
 	
 	@Min(value=1)
 	private float price;
 	
+	@Min(value=1)
 	private int quantity;
+	
 	private float totalAmount;
 
 	//getters and setters
