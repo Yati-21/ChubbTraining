@@ -37,8 +37,8 @@ public class OrderController   //receive http req
 	Order1 saveOrder(@RequestBody @Valid Order1 order)
 	{
 		log.debug("Debug log:::logger added");
-		service.insertOrder(order);
-		return order;
+		return service.insertOrder(order);
+		
 	}
 	
 }

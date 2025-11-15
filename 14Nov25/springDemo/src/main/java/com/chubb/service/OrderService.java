@@ -14,13 +14,13 @@ public class OrderService //to implement business logic
 {
 	@Autowired
 	OrderRepository orderRepository;
-	public void insertOrder(Order1 order) 
+	public Order1 insertOrder(Order1 order) 
 	{
 //		order.setTotalAmount(order.getPrice()*order.getQuantity());
 //		System.out.println(order);
 		
-		orderRepository.save(order);
-		log.debug(order.toString());
+		return orderRepository.save(order);
+//		log.debug(order.toString());
 	}
 	
 	public Order1 getOrderById(int id)

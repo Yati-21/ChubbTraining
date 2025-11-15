@@ -1,5 +1,7 @@
 package com.chubb.request;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,12 +12,6 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 public class Address 
 {
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	int id;
@@ -26,7 +22,14 @@ public class Address
 	@Min(value=1)
 	private int pin;
 		
+
 	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getHouseNo() {
 		return houseNo;
 	}
