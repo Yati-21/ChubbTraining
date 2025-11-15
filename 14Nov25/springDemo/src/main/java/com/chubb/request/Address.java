@@ -1,10 +1,25 @@
 package com.chubb.request;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+@Entity
 public class Address 
 {
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	int id;
+	
 	@NotBlank
 	private String houseNo;
 	

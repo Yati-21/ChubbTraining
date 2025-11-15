@@ -1,9 +1,10 @@
 package com.chubb.controller;
-import com.chubb.request.Order;
+import com.chubb.request.Order1;
 import com.chubb.service.OrderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,10 +19,11 @@ public class OrderController   //receive http req
 	@Autowired
 	OrderService service;
 	
-	@GetMapping("/order")   // add a unique path ()
-	String getOrder()
+	@GetMapping("/order/{id}")   //add a unique path ()
+	Order1 getOrder(@PathVariable int id)
 	{
-		return "hello";
+//		return "hello";
+		return service.getOrderById(id);
 	}
 	
 	
@@ -32,7 +34,7 @@ public class OrderController   //receive http req
 //		return order;
 //	}
 	@PostMapping("/order")
-	Order saveOrder(@RequestBody @Valid Order order)
+	Order1 saveOrder(@RequestBody @Valid Order1 order)
 	{
 		log.debug("Debug log:::logger added");
 		service.insertOrder(order);
