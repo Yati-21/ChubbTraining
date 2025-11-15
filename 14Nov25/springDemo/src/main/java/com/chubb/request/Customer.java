@@ -7,39 +7,43 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-public class Address 
+public class Customer 
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int id;
+	private int id;
 	
 	@NotBlank
-	private String houseNo;
+	private String name;
 	
-	@Min(value=1)
-	private int pin;
-		
-	
+	@ManyToMany(mappedBy="customers")
+	private List<Order1> orders;
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getHouseNo() {
-		return houseNo;
+
+	public String getName() {
+		return name;
 	}
-	public void setHouseNo(String houseNo) {
-		this.houseNo = houseNo;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	public int getPin() {
-		return pin;
+
+	public List<Order1> getOrders() {
+		return orders;
 	}
-	public void setPin(int pin) {
-		this.pin = pin;
+
+	public void setOrders(List<Order1> orders) {
+		this.orders = orders;
 	}
+	
 }
