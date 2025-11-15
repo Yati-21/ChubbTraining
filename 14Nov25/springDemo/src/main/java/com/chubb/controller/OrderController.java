@@ -21,7 +21,6 @@ public class OrderController   //receive http req
 	@GetMapping("/order")   // add a unique path ()
 	String getOrder()
 	{
-//		log.debug("logger added");
 		return "hello";
 	}
 	
@@ -35,6 +34,7 @@ public class OrderController   //receive http req
 	@PostMapping("/order")
 	Order saveOrder(@RequestBody @Valid Order order)
 	{
+		log.debug("Debug log:::logger added");
 		service.insertOrder(order);
 		return order;
 	}
