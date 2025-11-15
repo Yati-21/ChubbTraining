@@ -1,10 +1,8 @@
 package com.chubb.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.chubb.repository.OrderRepository;
-import com.chubb.request.Order1;
+import com.chubb.request.Order;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,21 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OrderService //to implement business logic
 {
-	@Autowired
-	OrderRepository orderRepository;
-	public Order1 insertOrder(Order1 order) 
+	public void insertOrder(Order order) 
 	{
-//		order.setTotalAmount(order.getPrice()*order.getQuantity());
-//		System.out.println(order);
-		
-		return orderRepository.save(order);
-//		log.debug(order.toString());
-	}
+		order.setTotalAmount(order.getPrice()*order.getQuantity());
+		System.out.println(order);
 	
-	public Order1 getOrderById(int id)
-	{
-		return orderRepository.findById(id).orElse(null);
-		
+//		log.debug(order.toString());
 	}
 
 }
