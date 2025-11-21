@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 import com.chubb.entity.Passenger;
 
 @Repository
-public interface PassengerRepository extends JpaRepository<Passenger, Long> {
+public interface PassengerRepository extends JpaRepository<Passenger,Long> 
+{
+
+	boolean existsBySeatNumberAndBooking_Flight_Id(String seatNumber,Long flightId);
 
 }

@@ -2,6 +2,7 @@ package com.chubb.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,13 +23,14 @@ public class Flight
 {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy =GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
     private String airline;
 
     @NotBlank
+    @Column(unique= true)
     private String flightNumber;
 
     @Enumerated(EnumType.STRING)
@@ -41,6 +43,7 @@ public class Flight
 
     @NotNull
     private LocalDateTime departureTime;
+    
     @NotNull
     private LocalDateTime arrivalTime;
 
@@ -53,14 +56,16 @@ public class Flight
     @Min(value=0)
     private double price;
     
-    @AssertTrue(message = "fromCity and toCity cannot be same")
-    public boolean isDifferentCities() {
-        return fromCity != null && toCity != null && !fromCity.equals(toCity);
+    @AssertTrue(message ="fromCity and toCity cannot be same")
+    public boolean isDifferentCities() 
+    {
+        return fromCity!= null && toCity!= null && !fromCity.equals(toCity);
     }
 
-    @AssertTrue(message = "Arrival time must be after departure time")
-    public boolean isValidTimes() {
-        if (departureTime == null || arrivalTime == null) return true; // let other validation handle null
+    @AssertTrue(message="Arrival time must be after departure time")
+    public boolean isValidTimes() 
+    {
+        if (departureTime==null ||arrivalTime ==null) return true;
         return arrivalTime.isAfter(departureTime);
     }
 

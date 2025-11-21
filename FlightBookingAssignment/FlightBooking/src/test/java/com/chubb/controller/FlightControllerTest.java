@@ -3,6 +3,7 @@ package com.chubb.controller;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -18,18 +19,25 @@ import org.springframework.http.MediaType;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.chubb.entity.AirportCode;
 import com.chubb.entity.Booking;
 import com.chubb.entity.Flight;
+import com.chubb.entity.MealType;
+import com.chubb.exception.BusinessException;
+import com.chubb.exception.NotFoundException;
+import com.chubb.exception.SeatUnavailableException;
 import com.chubb.request.BookingRequest;
 import com.chubb.request.FlightSearchRequest;
+import com.chubb.request.PassengerRequest;
 import com.chubb.service.FlightService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(FlightController.class)
-public class FlightControllerTest {
+class FlightControllerTest 
+{
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,83 +49,177 @@ public class FlightControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testSearchFlights() throws Exception {
-        Flight flight = new Flight();
+    void testSearchFlightsSuccess() throws Exception 
+    {
+        Flight flight=new Flight();
         flight.setId(1L);
-        flight.setAirline("IndiGo");
-        flight.setFlightNumber("6E101");
+        flight.setAirline("TestAir");
+        flight.setFlightNumber("TA101");
         flight.setFromCity(AirportCode.DEL);
         flight.setToCity(AirportCode.BOM);
-        flight.setTotalSeats(180);
-        flight.setAvailableSeats(180);
-        flight.setPrice(4500);
+        flight.setAvailableSeats(100);
 
-        LocalDate journeyDate = LocalDate.of(2025, 12, 20);
+        LocalDate date = LocalDate.of(2025,5,10);
 
-        when(service.searchFlights("DEL", "BOM", journeyDate))
-                .thenReturn(List.of(flight));
+        when(service.searchFlights("DEL","BOM", date)).thenReturn(List.of(flight));
 
+        FlightSearchRequest req =new FlightSearchRequest();
+        req.setFrom("DEL");
+        req.setTo("BOM");
+        req.setJourneyDate(date);
+
+        mockMvc.perform(post("/api/v1.0/flight/search").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(req)))
+        	.andExpect(status().isOk()).andExpect(jsonPath("$[0].flightNumber").value("TA101"));
+    }
+
+    @Test
+    void testSearchFlights_ValidationError() throws Exception 
+    {
         FlightSearchRequest req = new FlightSearchRequest();
-        req.from = "DEL";
-        req.to = "BOM";
-        req.journeyDate = journeyDate;
+        req.setFrom(""); //invalid
+        req.setTo("BOM");
+        req.setJourneyDate(null); //invalid
 
-        mockMvc.perform(
-                    post("/api/v1.0/flight/search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req))
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].flightNumber").value("6E101"))
-                .andExpect(jsonPath("$[0].airline").value("IndiGo"))
-                .andExpect(jsonPath("$[0].fromCity").value("DEL"))
-                .andExpect(jsonPath("$[0].toCity").value("BOM"));
+        mockMvc.perform(post("/api/v1.0/flight/search")
+        		.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.from").exists()).andExpect(jsonPath("$.journeyDate").exists());
     }
 
     @Test
-    void testGetTicket() throws Exception {
-        Booking booking = new Booking();
-        booking.setPnr("PNR12345");
-        booking.setName("Ravi");
-        booking.setEmail("ravi@gmail.com");
-        booking.setSeatsBooked(2);
+    void testSearchFlights_InvalidAirport() throws Exception 
+    {
+        FlightSearchRequest req=new FlightSearchRequest();
+        req.setFrom("XXX");
+        req.setTo("BOM");
+        req.setJourneyDate(LocalDate.now());
 
-        when(service.getTicket("PNR12345")).thenReturn(booking);
+        when(service.searchFlights("XXX","BOM", LocalDate.now()))
+        	.thenThrow(new BusinessException("Invalid airport code: XXX"));
 
-        mockMvc.perform(get("/api/v1.0/flight/ticket/PNR12345"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.pnr").value("PNR12345"))
-                .andExpect(jsonPath("$.name").value("Ravi"))
-                .andExpect(jsonPath("$.email").value("ravi@gmail.com"));
+        mockMvc.perform(post("/api/v1.0/flight/search")
+        		.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(req))).andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value("Invalid airport code: XXX"));
     }
 
     @Test
-    void testUpdateBooking() throws Exception {
-        Booking updated = new Booking();
-        updated.setPnr("PNR50000");
-        updated.setName("Updated Name");
-        updated.setEmail("updated@gmail.com");
-        updated.setSeatsBooked(1);
-        updated.setMealType("VEG");
+    void testBookTicketSuccess() throws Exception 
+    {
+        when(service.bookTicket(eq(1L),any())).thenReturn("PNR12345");
 
-        when(service.updateBooking(eq("PNR50000"), any(BookingRequest.class)))
-                .thenReturn(updated);
+        BookingRequest req =validBookingRequest();
 
-        BookingRequest req = new BookingRequest();
-        req.name = "Updated Name";
-        req.email = "updated@gmail.com";
-        req.seats = 1;
-        req.mealType = "VEG";
+        mockMvc.perform(post("/api/v1.0/flight/booking/1")
+            .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk()).andExpect(content().string("PNR12345"));
+    }
 
-        mockMvc.perform(
-                    put("/api/v1.0/flight/booking/update/PNR50000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req))
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.pnr").value("PNR50000"))
-                .andExpect(jsonPath("$.name").value("Updated Name"))
-                .andExpect(jsonPath("$.email").value("updated@gmail.com"))
-                .andExpect(jsonPath("$.mealType").value("VEG"));
+    @Test
+    void testBookTicket_ValidationFailure() throws Exception 
+    {
+        BookingRequest req =new BookingRequest();
+        req.setName(""); //invalid
+        req.setEmail("invalid email");
+
+        mockMvc.perform(post("/api/v1.0/flight/booking/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(req)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.name").exists())
+            .andExpect(jsonPath("$.email").exists());
+    }
+
+    @Test
+    void testGetTicketSuccess() throws Exception 
+    {
+        Booking b = new Booking();
+        b.setPnr("PNR50000");
+        b.setName("User");
+        when(service.getTicket("PNR50000")).thenReturn(b);
+
+        mockMvc.perform(get("/api/v1.0/flight/ticket/PNR50000"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.pnr").value("PNR50000"));
+    }
+
+    @Test
+    void testGetTicket_NotFound() throws Exception 
+    {
+        when(service.getTicket("PNR999"))
+            .thenThrow(new NotFoundException("PNR not found"));
+
+        mockMvc.perform(get("/api/v1.0/flight/ticket/PNR999"))
+        .andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("PNR not found"));
+    }
+
+
+    @Test
+    void testUpdateBookingSuccess() throws Exception 
+    {
+        Booking b =new Booking();
+        b.setPnr("PNR123");
+        b.setName("Updated User");
+
+        when(service.updateBooking(eq("PNR123"),any())).thenReturn(b);
+
+        mockMvc.perform(put("/api/v1.0/flight/booking/update/PNR123")
+            .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(validBookingRequest())))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.pnr").value("PNR123"));
+    }
+
+    @Test
+    void testUpdateBooking_SeatUnavailable() throws Exception 
+    {
+        when(service.updateBooking(eq("PNR500"),any()))
+            .thenThrow(new SeatUnavailableException("Seat already booked"));
+        mockMvc.perform(put("/api/v1.0/flight/booking/update/PNR500")
+            .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(validBookingRequest())))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value("Seat already booked"));
+    }
+
+
+    @Test
+    void testCancelBookingSuccess() throws Exception 
+    {
+        when(service.cancelBooking("PNR111")).thenReturn("Booking cancelled successfully: PNR111");
+        mockMvc.perform(delete("/api/v1.0/flight/booking/cancel/PNR111"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("Booking cancelled successfully: PNR111"));
+    }
+
+    @Test
+    void testCancelBooking_NotFound() throws Exception 
+    {
+        when(service.cancelBooking("PNR999"))
+            .thenThrow(new NotFoundException("Invalid PNR"));
+
+        mockMvc.perform(delete("/api/v1.0/flight/booking/cancel/PNR999")).andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Invalid PNR"));
+    }
+
+    @Test
+    void testGetBookingHistory() throws Exception 
+    {
+        Booking b=new Booking();
+        b.setPnr("PNR123");
+
+        when(service.getBookingHistory("abc@test.com")).thenReturn(List.of(b));
+
+        mockMvc.perform(get("/api/v1.0/flight/booking/history/abc@test.com"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$[0].pnr").value("PNR123"));
+    }
+
+    private BookingRequest validBookingRequest() 
+    {
+        BookingRequest req =new BookingRequest();
+        req.setName("User");
+        req.setEmail("user@test.com");
+        req.setSeats(1);
+        req.setMealType(MealType.VEG);
+
+        PassengerRequest p =new PassengerRequest();
+        p.setName("P1");
+        p.setGender("M");
+        p.setAge(20);
+        p.setSeatNumber("A1");
+
+        req.setPassengers(List.of(p));
+        return req;
     }
 }

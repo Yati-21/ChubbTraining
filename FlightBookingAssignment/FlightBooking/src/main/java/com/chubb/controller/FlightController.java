@@ -24,56 +24,58 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1.0/flight")
-public class FlightController {
+public class FlightController 
+{
 
-    @Autowired
+	//using construction injection instead of autowired- sonarqube suggestion
     private FlightService service;
-
-    // POST /api/v1.0/flight/airline/inventory/add
+    public FlightController(FlightService service) {
+        this.service = service;
+    }
+    
     @PostMapping("/airline/inventory/add")
-    public Flight addFlight(@RequestBody @Valid Flight flight) {
-        log.debug("Adding flight: " + flight.getFlightNumber());
+    public Flight addFlight(@RequestBody @Valid Flight flight) 
+    {
+        log.debug("Adding flight: "+flight.getFlightNumber());
         return service.addFlight(flight);
     }
 
     
-    // POST /api/v1.0/flight/search
     @PostMapping("/search")
-    public List<Flight> search(@RequestBody FlightSearchRequest request) {
-    	return service.searchFlights(request.from, request.to, request.journeyDate);
-
+    public List<Flight> search(@Valid @RequestBody FlightSearchRequest request) 
+    {
+        return service.searchFlights(request.getFrom(), request.getTo(), request.getJourneyDate());
     }
 
 
-    
-    // POST /api/v1.0/flight/booking/{flightId}
     @PostMapping("/booking/{flightId}")
-    public String bookTicket(@PathVariable Long flightId,@RequestBody @Valid BookingRequest req) {
-        return service.bookTicket(flightId, req);
+    public String bookTicket(@PathVariable Long flightId,@RequestBody @Valid BookingRequest req) 
+    {
+        return service.bookTicket(flightId,req);
     }
 
-    // GET /api/v1.0/flight/ticket/{pnr}
     @GetMapping("/ticket/{pnr}")
-    public Booking getTicket(@PathVariable String pnr) {
+    public Booking getTicket(@PathVariable String pnr) 
+    {
         return service.getTicket(pnr);
     }
     
     
-    // GET /api/v1.0/flight/booking/history/{email}
     @GetMapping("/booking/history/{email}")
-    public List<Booking> getBookingHistory(@PathVariable String email) {
+    public List<Booking> getBookingHistory(@PathVariable String email) 
+    {
         return service.getBookingHistory(email);
     }
     
-    // DELETE /api/v1.0/flight/booking/cancel/{pnr}
     @DeleteMapping("/booking/cancel/{pnr}")
-    public String cancelBooking(@PathVariable String pnr) {
+    public String cancelBooking(@PathVariable String pnr) 
+    {
         return service.cancelBooking(pnr);
     }
     
-    // PUT /api/v1.0/flight/booking/update/{pnr}
     @PutMapping("/booking/update/{pnr}")
-    public Booking updateBooking(@PathVariable String pnr, @RequestBody @Valid BookingRequest req) {
+    public Booking updateBooking(@PathVariable String pnr,@RequestBody @Valid BookingRequest req) 
+    {
         return service.updateBooking(pnr, req);
     }
 

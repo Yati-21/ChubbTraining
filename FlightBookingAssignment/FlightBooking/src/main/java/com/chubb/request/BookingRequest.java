@@ -2,23 +2,35 @@ package com.chubb.request;
 
 import java.util.List;
 
+import com.chubb.entity.MealType;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-public class BookingRequest {
+@Getter
+@Setter
+public class BookingRequest 
+{
 
-    @NotBlank
-    public String name;
+    @NotBlank(message="Name is required")
+    private String name;
 
-    @Email
-    public String email;
+    @Email(message="Invalid email format")
+    @NotBlank(message="Email is required")
+    private String email;
 
-    @Min(value=1, message= "Seats must be at least 1")
-    public int seats;
+    @Min(value=1,message="at least 1 must be booked")
+    private int seats;
     
-    @NotBlank(message = "Meal type is required")
-    public String mealType;
+    @NotNull(message="Meal type is required")
+    private MealType mealType;
 
-    public List<PassengerRequest> passengers;
+
+    @NotEmpty(message="Passenger list cannot be empty")
+    private List<PassengerRequest> passengers;
 }

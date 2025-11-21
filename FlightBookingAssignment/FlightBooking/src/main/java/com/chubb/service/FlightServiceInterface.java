@@ -9,8 +9,8 @@ import com.chubb.request.BookingRequest;
 
 public interface FlightServiceInterface {
 
-    Flight addFlight(Flight flight);
-
+	Flight addFlight(Flight flight);
+	
     List<Flight> searchFlights(String from, String to, LocalDate journeyDate);
 
     String bookTicket(Long flightId, BookingRequest req);

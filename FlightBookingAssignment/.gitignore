@@ -1,0 +1,14 @@
+# Ignore Eclipse workspace metadata
+.metadata/
+
+# Ignore build output
+bin/
+build/
+target/
+
+# Ignore OS/system files
+.DS_Store
+Thumbs.db
+
+src/main/resources/application.properties
+

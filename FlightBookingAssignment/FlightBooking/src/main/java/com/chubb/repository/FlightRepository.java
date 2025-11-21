@@ -9,7 +9,8 @@ import com.chubb.entity.AirportCode;
 import com.chubb.entity.Flight;
 
 @Repository
-public interface FlightRepository extends JpaRepository<Flight, Long> {
+public interface FlightRepository extends JpaRepository<Flight,Long> 
+{
 
-    List<Flight> findByFromCityAndToCity(AirportCode fromCity, AirportCode toCity);
+    List<Flight> findByFromCityAndToCity(AirportCode fromCity,AirportCode toCity);
 }
