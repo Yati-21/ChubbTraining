@@ -27,7 +27,9 @@ public class StudentService
 	
 	public Mono<Student> save(Student student)
 	{
-		return studentRepo.save(student);
+		return studentRepo.save(student).doOnError(ex->{
+			System.out.println(ex);
+		});
 	}
 
 	public Mono<Student> update(Student student)
