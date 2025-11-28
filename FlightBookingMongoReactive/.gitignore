@@ -1,0 +1,14 @@
+/.metadata/
+.gradle/
+build/
+bin/
+target/
+
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+
+.DS_Store
+Thumbs.db
