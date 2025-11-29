@@ -16,7 +16,7 @@ import com.quiz.entity.Question;
 //@FeignClient(name = "QUESTION-SERVICE")
 
 @FeignClient(
-	    name = "QUESTION-SERVICE",
+	    name = "question-service",
 	    fallback = QuestionClientFallback.class
 	)
 public interface QuestionClient {
