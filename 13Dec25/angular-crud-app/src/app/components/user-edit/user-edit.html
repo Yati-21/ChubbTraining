@@ -1,1 +1,5 @@
-<p>user-edit works!</p>
+<form [formGroup]="form" (ngSubmit)="updateUser()">
+  <input formControlName="name">
+  <input formControlName="email">
+  <button type="submit">Update</button>
+</form>

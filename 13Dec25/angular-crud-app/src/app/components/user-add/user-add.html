@@ -1,1 +1,6 @@
-<p>user-add works!</p>
+<form (ngSubmit)="addUser()">
+  <input [(ngModel)]="user.name" name="name" placeholder="Name">
+  <input [(ngModel)]="user.email" name="email" placeholder="Email">
+  <button type="submit">Add</button>
+</form>
+ 

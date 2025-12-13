@@ -1,1 +1,29 @@
-<p>user-list works!</p>
+<a routerLink="/add">Add user</a>
+
+<p *ngIf="loading()">Loading users...</p>
+
+<p *ngIf="!loading()">Users count: {{ users().length }}</p>
+
+<table *ngIf="users().length > 0" border="1" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let user of users()">
+      <td>{{ user.id }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <a [routerLink]="['/edit', user.id]">Edit</a> |
+        <button (click)="deleteUser(user.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
