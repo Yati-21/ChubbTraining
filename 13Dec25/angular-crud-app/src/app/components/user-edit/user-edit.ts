@@ -13,7 +13,7 @@ import { UserService } from '../../services/user';
 })
 export class UserEdit implements OnInit {
 
-  id!: number;
+  id!: string;
   form!: FormGroup;
 
   constructor(
@@ -25,7 +25,7 @@ export class UserEdit implements OnInit {
 
 
   ngOnInit() {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
+    this.id = this.route.snapshot.paramMap.get('id')!;
 
     this.form = this.fb.group({
       name: [''],
@@ -40,6 +40,7 @@ export class UserEdit implements OnInit {
   updateUser() {
     this.userService.updateUser(this.id, this.form.value)
       .subscribe(() => {
+        console.log("szcscxazs")
         alert('User updated');
         this.router.navigate(['/']);
       });

@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+export interface User {
+  id?: string;
+  name: string;
+  email?: string;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +18,7 @@ export class UserService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  getUserById(id: number) {
+  getUserById(id: string) {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
@@ -21,11 +26,11 @@ export class UserService {
     return this.http.post(this.apiUrl, user);
   }
 
-  updateUser(id: number, user: any) {
+  updateUser(id: string, user: User) {
     return this.http.put(`${this.apiUrl}/${id}`, user);
   }
 
-  deleteUser(id: number) {
+  deleteUser(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
