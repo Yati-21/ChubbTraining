@@ -140,13 +140,23 @@
 // console.log(a);  //error - a is not defined outside the function
 // test();  //10
 
-console.log(a);  //error - a is not defined outside the function
-var a= 10;
-console.log(a);  //10
-console.log(this.a); //10 
-console.log(window.a); //10
-//this / window refers to the global object in browser environment
 
-console.log(window);
-console.log(this ===window);  //true
 
+// console.log(a);  //error - a is not defined outside the function
+// var a= 10;
+// console.log(a);  //10
+// console.log(this.a); //10 
+// console.log(window.a); //10
+// //this / window refers to the global object in browser environment
+
+// console.log(window);
+// console.log(this ===window);  //true
+
+
+
+function add(a,b)
+{
+    return a+b;
+}
+const result=add(3,4,5)
+console.log(result)

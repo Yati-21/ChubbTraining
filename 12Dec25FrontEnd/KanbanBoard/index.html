@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amarna:ital,wght@0,100..700;1,100..700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Kanban Board</h1>
+      <div class="board">
+
+        <div class="list">
+          <h2>To Do</h2>
+          <div class="task" draggable="true" id="card1">to do1</div>
+          <div class="task" draggable="true" id="card2">to do 2</div>
+          <div class="task" draggable="true" id="card3">
+            to do 3 Lorem ipsum dolor, 
+          </div>
+        </div>
+
+        <div class="list">
+          <h2>in progress</h2>
+          <div class="task" draggable="true" id="card4">task 4</div>
+          <div class="task" draggable="true" id="card5">task 5</div>
+        </div>
+
+        <div class="list">
+          <h2>completed</h2>
+          <div class="task" draggable="true" id="card6">task 6</div>
+        </div>
+
+      </div>
+    </div>
+    <script src="script.js">
+    </script>
+  </body>
+</html>
