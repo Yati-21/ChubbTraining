@@ -1,0 +1,24 @@
+<!-- <p>user works!</p>
+<h1> Users:</h1>
+@for(u of users; track u.id)
+{
+    <ul>{{u.name}}</ul>
+
+}
+
+<img alt="photo" [src]="imgUrl"> -->
+
+
+
+<div (mouseover)="showSecretMsg()">
+  @if(!message)
+  {
+    hover to see the secret msg user: {{username()}}
+  }
+  @else {
+    {{message}}
+  }
+  </div>
+  <button (click)="addItem()">add item</button>
+
+
